@@ -1,57 +1,80 @@
-# EXPERIMENT DETAILS
+# CAT5 — CONTINUOUS ASSESSMENT 5
 
-**EXP:** CONTINUOUS ASSESSMENT 5 (CAT5)
-
-**DATE:** 10/08/2026
-
-**NAME OF EXP:** Hardware Timer and Interrupt-Based Timing for LED Fading, Pulse Generation, and Stepper Motor Control
-
-**HARDWARE SETUP / PLATFORM:** AT89S52 (11.0592 MHz) + Keil C51 uVision + Oscilloscope
+**Date:** 10/08/2026  
+**Experiment:** 5B.3 — Multi-Waveform Signal Generator  
+**Platform:** AT89S52 · 11.0592 MHz · Keil C51 µVision · Oscilloscope
 
 ---
 
-## TASK 5B.3: Multi-Waveform Signal Generator (Square, Duty, Pulse, Burst)
+## 1. Experiment Overview
 
-### 1. Hardware Setup & Circuit Diagram
+This experiment generates four types of digital waveforms through a single output pin:
 
-- **MCU:** AT89S52 @ 11.0592 MHz
-- **Signal Output:** `P1.1` → Oscilloscope Channel 1
-- **Waveform Selector:** `P3.2` pushbutton
-- **Waveform Modes:**
-  - Square Wave
-  - Variable Duty-Cycle Wave
-  - Pulse Train
-  - Burst Signal
+- Square wave
+- Variable duty-cycle wave
+- Pulse train
+- Burst signal
+
+A 24-bit pattern represents each waveform. Timer 0 controls the timing of the output, while a pushbutton selects which pattern is transmitted.
+
+## 2. Hardware Interface
+
+| Component | Connection / Configuration |
+|:--|:--|
+| Microcontroller | AT89S52 |
+| Clock frequency | 11.0592 MHz |
+| Waveform output | P1.1 |
+| Output monitoring | Oscilloscope, Channel 1 |
+| Waveform selector | Pushbutton on P3.2 |
+| Timer | Timer 0 |
+| Timer interrupt interval | 500 µs |
+
+## 3. Circuit Diagram
 
 ![CAT5B.3 Circuit Diagram](circuit.png)
 
-### 2. Core Logic / Pseudocode / Code Base
+## 4. How the Waveform Generation Works
 
-**Working Principle:**
+The program stores four 24-bit waveform masks in a ROM array named `waveforms[4]`. The selected mask is transmitted one bit at a time through P1.1.
 
-The signal generator uses 24-bit waveform patterns stored in ROM. Timer 0 generates an interrupt every 500 µs, and the ISR shifts the selected waveform pattern onto `P1.1` one bit at a time, starting from the most significant bit.
+Timer 0 generates an interrupt every 500 µs. During each interrupt, the program:
 
-The waveform selector button connected to `P3.2` switches between the four available waveform modes.
+1. Reads the bit at position `23 - bit_idx` from the currently selected waveform mask.
+2. Writes that bit to P1.1.
+3. Advances `bit_idx` so the next interrupt outputs the next bit.
 
-**Pseudocode:**
+The sequence starts at the most significant bit. The waveform selector on P3.2 changes the active pattern, allowing the same timer-driven output mechanism to generate all four waveform types.
 
-1. Store the four 24-bit waveform masks in a ROM array.
-2. Configure Timer 0 to generate interrupts at 500 µs intervals.
-3. In the Timer 0 ISR:
-   - Output bit `(23 - bit_idx)` to `P1.1`.
-   - Increment `bit_idx` to move to the next bit.
-4. Detect and debounce the button press on `P3.2`.
-5. Update `wave_mode` to select the next waveform.
+## 5. Program Flow
 
-**Code Base:**
+1. Define the four 24-bit waveform patterns in the ROM array `waveforms[4]`.
+2. Initialize the waveform selection and bit-position variables.
+3. Configure Timer 0 for a 500 µs interrupt interval.
+4. Enable the Timer 0 interrupt and start the timer.
+5. In the interrupt service routine, output the selected pattern's current bit to P1.1.
+6. Increment `bit_idx` to advance through the 24-bit pattern.
+7. Monitor the P3.2 pushbutton and debounce each press.
+8. Update `wave_mode` to select the next waveform.
+9. Continue transmitting the selected waveform pattern.
 
-- `waveforms[4]` stores the four waveform patterns.
-- `bit_idx` tracks the current bit position.
-- `wave_mode` selects the active waveform.
-- A parameterized ISR handles all four waveform types.
+## 6. Important Program Variables
 
-**Build Note:** Rebuild `TASK5B_3.uvproj` in Keil C51 uVision to regenerate `Objects/TASK5B_3.hex` before flashing the AT89S52 board.
+| Variable | Purpose |
+|:--|:--|
+| `waveforms[4]` | Stores the four 24-bit waveform patterns |
+| `bit_idx` | Tracks the bit currently being output |
+| `wave_mode` | Selects the active waveform pattern |
 
-### 3. Inference
+A parameterized Timer 0 interrupt service routine is used for all four waveform modes; the selected pattern determines the output sequence.
 
-Bit-slotted timer serialization enables multiple digital waveform patterns to be generated through a single GPIO pin. The system produces square waves, variable duty-cycle waves, pulse trains, and burst signals using Timer 0 interrupts.
+## 7. Build and Output
+
+Rebuild `TASK5B_3.uvproj` in Keil C51 µVision to generate:
+
+`Objects/TASK5B_3.hex`
+
+Observe the signal at P1.1 using Oscilloscope Channel 1. Use the pushbutton connected to P3.2 to switch between the four waveform modes.
+
+## 8. Inference
+
+The experiment demonstrates how a sequence of stored digital bits can be serialized onto a single GPIO pin using timer interrupts. By changing the selected 24-bit pattern, the AT89S52 generates square-wave, variable-duty-cycle, pulse-train, and burst outputs through the same P1.1 signal line.

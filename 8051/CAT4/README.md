@@ -1,14 +1,15 @@
-# CAT4 – 8051 Matrix Keypad, Seven-Segment Display and LED Interfacing
+# CAT4 — 8051 Matrix Keypad, Seven-Segment Display and LED Interfacing
 
 ## Experiment Details
 - **Course:** 25CS2741 – Fundamentals of Internet of Things + Lab
+- **Experiment:** CAT4
 - **Date:** 03/08/2026
 - **Microcontroller:** AT89S52 (8051)
 - **Software:** Keil µVision
 - **Programming Language:** Embedded C
 
 ## Aim
-To interface a 4×4 matrix keypad, seven-segment display and LEDs with the AT89S52 microcontroller to perform different operations based on keypad inputs.
+To interface a 4×4 matrix keypad, seven-segment display, and LEDs with the AT89S52 microcontroller and perform different operations based on keypad inputs.
 
 ## Hardware Requirements
 - AT89S52 Development Board
@@ -25,17 +26,18 @@ To interface a 4×4 matrix keypad, seven-segment display and LEDs with the AT89S
 
 ## Circuit Diagram
 
-![CAT4 Circuit Diagram](circuit.png)
+<img width="1920" height="819" alt="CAT4 Keypad and Display Interface Schematic" src="https://github.com/user-attachments/assets/6cfccd86-b0d8-4721-b32a-66d8f3aacbd3" />
+
 
 ## Task Description
 - Scan the 4×4 matrix keypad to detect key presses.
 - Display the corresponding digit on the seven-segment display.
 - Control LED operations according to the detected key.
-- Implement running LED, alternate LED, binary counter and blinking patterns.
+- Implement running LED, alternate LED, binary counter, and blinking patterns.
 - Reset the system when key 0 is pressed.
 
 ## Algorithm
-1. Initialize the keypad, seven-segment display and LEDs.
+1. Initialize the keypad, seven-segment display, and LEDs.
 2. Continuously scan the keypad.
 3. Identify the pressed key.
 4. Display the corresponding digit.
@@ -49,4 +51,4 @@ To interface a 4×4 matrix keypad, seven-segment display and LEDs with the AT89S
 - `circuit.png` – Circuit diagram.
 
 ## Result
-The matrix keypad, seven-segment display and LEDs were interfaced with the AT89S52 microcontroller. Keypad inputs were used to display digits and execute the corresponding LED operations.
+The matrix keypad, seven-segment display, and LEDs were interfaced with the AT89S52 microcontroller. Keypad inputs were used to display digits and execute the corresponding LED operations.

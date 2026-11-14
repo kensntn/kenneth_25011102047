@@ -1,60 +1,90 @@
 # EXPERIMENT DETAILS
 
-**EXP:** CONTINUOUS ASSESSMENT 5 (CAT5)
-
-**DATE:** 10/08/2026
-
-**NAME OF EXP:** Hardware Timer and Interrupt-Based Timing for LED Fading, Pulse Generation, and Stepper Motor Control
-
+**EXP:** CONTINUOUS ASSESSMENT 5 (CAT5)  
+**DATE:** 10/08/2026  
+**NAME OF EXP:** Hardware Timer and Interrupt-Based Timing for LED Fading, Pulse Generation, and Stepper Motor Control  
 **HARDWARE SETUP / PLATFORM:** AT89S52 (11.0592 MHz) + 8051 Development Board
 
 ---
 
-## TASK 5C: Stepper Motor Speed and Direction Control
+# TASK 5C — STEPPER MOTOR SPEED AND DIRECTION CONTROL
 
-### 1. Hardware Setup & Circuit Diagram
+<sub>Optional task for this week</sub>
 
-- **MCU:** AT89S52 @ 11.0592 MHz
-- **Output Device:** Stepper Motor
-- **Control Method:** Timer Interrupt-Based Step Sequencing
-- **Task Status:** Optional for this week
+## Experiment Aim
+
+To control stepper motor rotation using Timer 0 interrupts. The timer determines when the next motor step is applied, and changing the interval between steps changes the motor speed.
+
+## Hardware Setup
+
+| Item | Details |
+|---|---|
+| Microcontroller | AT89S52 |
+| Clock frequency | 11.0592 MHz |
+| Output device | Stepper motor |
+| Timing source | Timer 0 interrupt |
+| Control method | Interrupt-based step sequencing |
+
+## Circuit Diagram
 
 ![CAT5C Circuit Diagram](circuit.png)
 
-### 2. Core Logic / Pseudocode / Code Base
+## Step Pattern
 
-**Working Principle:**
-
-The Timer 0 interrupt determines the step interval of the stepper motor. At every interrupt, the controller generates the next step sequence to rotate the motor.
-
-The motor speed is controlled by changing the time interval between consecutive steps.
-
-**Step Sequence:**
+The motor is driven by applying the following four output patterns in sequence:
 
 ```text
-1000
-0100
-0010
-0001
+Step 1  →  1000
+Step 2  →  0100
+Step 3  →  0010
+Step 4  →  0001
 ```
 
-**Speed Settings:**
+After the fourth pattern, the sequence starts again from the first. Repeating this order produces continuous stepping.
 
-- **Slow:** 100 ms/step
-- **Medium:** 50 ms/step
-- **Fast:** 10 ms/step
+## Speed Control
 
-**Pseudocode:**
+The interval between consecutive step patterns determines the stepping speed.
 
-1. Configure Timer 0 to generate periodic interrupts.
-2. Store the stepper motor sequence.
-3. On every timer interrupt:
-   - Generate the next step pattern.
-   - Send the pattern to the motor interface.
-   - Advance to the next step.
-4. Change the timer interval to control motor speed.
-5. Repeat the sequence continuously.
+| Speed selection | Interval per step |
+|---|---:|
+| Slow | 100 ms |
+| Medium | 50 ms |
+| Fast | 10 ms |
 
-### 3. Inference
+A smaller interval means the next step is applied sooner, increasing the stepping speed.
 
-Timer-based step sequencing enables controlled stepper motor rotation without software delay loops. Changing the timer interval controls motor speed while maintaining a consistent stepping sequence.
+## Interrupt Operation
+
+Timer 0 provides the timing event for each motor step. When its interrupt occurs, the controller performs the following operations:
+
+1. Select the next pattern from the step sequence.
+2. Send that pattern to the motor interface.
+3. Advance the sequence position.
+4. Continue from the beginning after the final pattern.
+
+The timer interval is adjusted to obtain the required speed setting.
+
+## Program Flow
+
+```text
+Initialize step sequence
+          |
+Configure Timer 0
+          |
+Enable timer interrupt
+          |
+Timer 0 interrupt occurs
+          |
+Output next step pattern
+          |
+Advance sequence position
+          |
+Repeat
+```
+
+## Inference
+
+The experiment demonstrates how Timer 0 interrupts can control the timing of stepper motor excitation. A repeating four-pattern sequence drives the motor, while the interval between successive patterns determines the stepping speed. Using timer interrupts avoids depending on software delay loops for step timing.
+
+**Implementation note:** The supplied experiment description specifies the step sequence and speed intervals, but does not provide a separate direction-reversal sequence or direction-control input.
